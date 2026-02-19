@@ -3,146 +3,109 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Inscription à l'Institut Bassora</title>
+<title>Inscription Institut Bassora</title>
 
 <style>
 body{
     margin:0;
-    font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg,#0f0f0f,#1c1c1c);
+    font-family:Segoe UI;
+    background:#0f0f0f;
     display:flex;
     justify-content:center;
     align-items:center;
     height:100vh;
 }
 
-.form-container{
-    background:#181818;
+.box{
+    background:#1c1c1c;
     padding:40px;
     border-radius:20px;
-    width:100%;
-    max-width:450px;
-    box-shadow:0 0 30px rgba(0,0,0,0.7);
+    width:400px;
+    box-shadow:0 0 30px rgba(0,0,0,0.8);
 }
 
 h2{
     text-align:center;
-    color:#ffffff;
-    margin-bottom:30px;
-    font-weight:600;
-}
-
-.input-group{
-    margin-bottom:20px;
-}
-
-label{
-    display:block;
-    margin-bottom:5px;
-    color:#aaa;
-    font-size:14px;
+    color:#fff;
+    margin-bottom:25px;
 }
 
 input, select{
     width:100%;
     padding:12px;
-    border-radius:10px;
+    margin-bottom:15px;
     border:none;
-    background:#222;
-    color:#fff;
-    font-size:15px;
-    outline:none;
-    transition:0.3s;
-}
-
-input:focus, select:focus{
-    box-shadow:0 0 10px #00bcd4;
+    border-radius:10px;
     background:#2a2a2a;
+    color:#fff;
 }
 
 button{
     width:100%;
-    padding:14px;
+    padding:12px;
     border:none;
-    border-radius:12px;
+    border-radius:10px;
     background:#00bcd4;
     color:#fff;
-    font-size:16px;
     font-weight:bold;
     cursor:pointer;
-    transition:0.3s;
 }
 
 button:hover{
     background:#0097a7;
-    transform:scale(1.03);
-}
-
-.footer{
-    text-align:center;
-    margin-top:15px;
-    font-size:12px;
-    color:#666;
 }
 </style>
 </head>
 
 <body>
 
-<div class="form-container">
-    <h2>Inscription à l'Institut Bassora</h2>
+<div class="box">
+<h2>Inscription à l'Institut Bassora</h2>
 
-    <form action="https://formsubmit.co/thebenayed@gmail.com" method="POST">
+<form id="form">
+<input type="text" placeholder="Nom" id="nom" required>
+<input type="text" placeholder="Prénom" id="prenom" required>
+<input type="email" placeholder="Email" id="email" required>
+<input type="tel" placeholder="Téléphone" id="tel" required>
+<input type="text" placeholder="École" id="ecole" required>
 
-        <!-- Evite captcha -->
-        <input type="hidden" name="_captcha" value="false">
+<select id="classe" required>
+<option value="">Classe</option>
+<option>3ème</option>
+<option>Seconde</option>
+<option>Première S</option>
+<option>Première L</option>
+<option>Terminale C</option>
+<option>Terminale D</option>
+<option>Terminale A</option>
+</select>
 
-        <div class="input-group">
-            <label>Nom</label>
-            <input type="text" name="Nom" required>
-        </div>
-
-        <div class="input-group">
-            <label>Prénom</label>
-            <input type="text" name="Prenom" required>
-        </div>
-
-        <div class="input-group">
-            <label>Email</label>
-            <input type="email" name="Email" required>
-        </div>
-
-        <div class="input-group">
-            <label>Numéro de téléphone</label>
-            <input type="tel" name="Telephone" required>
-        </div>
-
-        <div class="input-group">
-            <label>École</label>
-            <input type="text" name="Ecole" required>
-        </div>
-
-        <div class="input-group">
-            <label>Classe</label>
-            <select name="Classe" required>
-                <option value="">-- Sélectionner --</option>
-                <option>3ème</option>
-                <option>Seconde</option>
-                <option>Première S</option>
-                <option>Première L</option>
-                <option>Terminale C</option>
-                <option>Terminale D</option>
-                <option>Terminale A</option>
-            </select>
-        </div>
-
-        <button type="submit">Envoyer l'inscription</button>
-    </form>
-
-    <div class="footer">
-        Institut Bassora © 2026
-    </div>
+<button type="submit">Valider l'inscription</button>
+</form>
 </div>
+
+<script>
+document.getElementById("form").addEventListener("submit", function(e){
+    e.preventDefault();
+
+    let eleve = {
+        id: Date.now(),
+        nom: nom.value,
+        prenom: prenom.value,
+        email: email.value,
+        tel: tel.value,
+        ecole: ecole.value,
+        classe: classe.value,
+        paiements: {}
+    };
+
+    let data = JSON.parse(localStorage.getItem("eleves")) || [];
+    data.push(eleve);
+    localStorage.setItem("eleves", JSON.stringify(data));
+
+    window.location.href = "dashboard.html";
+});
+</script>
 
 </body>
 </html>
