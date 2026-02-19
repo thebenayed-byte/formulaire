@@ -69,6 +69,10 @@ button{
 
 <script>
     if(sessionStorage.getItem("admin") !== "true"){
+    window.location.href="merci.html";
+}
+
+    if(sessionStorage.getItem("admin") !== "true"){
     window.location.href="admin.html";
 }
 let data = JSON.parse(localStorage.getItem("eleves")) || [];
@@ -129,4 +133,5 @@ function afficherPaiements(eleve){
 
 </body>
 </html>
+
 
