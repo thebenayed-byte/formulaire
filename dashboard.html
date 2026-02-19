@@ -3,36 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Liste des inscrits</title>
+<title>Dashboard - Inscrits</title>
 
 <style>
 body{
     background:#0f0f0f;
-    font-family:Segoe UI;
     color:white;
+    font-family:Segoe UI;
     padding:20px;
 }
 
 h1{
     text-align:center;
+    margin-bottom:20px;
+    color:#00bcd4;
 }
 
-.list{
-    display:flex;
-    flex-wrap:wrap;
-    gap:15px;
-}
-
-.card{
+table{
+    width:100%;
+    border-collapse:collapse;
     background:#1c1c1c;
-    padding:15px;
-    border-radius:12px;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+th, td{
+    padding:12px;
+    text-align:left;
+}
+
+th{
+    background:#222;
+    color:#00bcd4;
+}
+
+tr:nth-child(even){
+    background:#1a1a1a;
+}
+
+tr:hover{
+    background:#00bcd4;
+    color:#000;
     cursor:pointer;
     transition:0.3s;
-}
-
-.card:hover{
-    background:#00bcd4;
 }
 
 .details{
@@ -40,14 +53,17 @@ h1{
     background:#1c1c1c;
     padding:20px;
     border-radius:15px;
+    display:none;
 }
 
-input{
+input, select{
     padding:8px;
     margin:5px 0;
     border-radius:8px;
     border:none;
+    width:200px;
 }
+
 button{
     padding:8px 12px;
     border:none;
@@ -55,6 +71,7 @@ button{
     background:#00bcd4;
     color:white;
     cursor:pointer;
+    margin-top:10px;
 }
 </style>
 </head>
@@ -63,30 +80,58 @@ button{
 
 <h1>Liste des Inscrits</h1>
 
-<div class="list" id="liste"></div>
+<table id="tableau">
+    <thead>
+        <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>École</th>
+            <th>Classe</th>
+            <th>Paiement total (KMF)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Les inscrits seront ajoutés ici par JS -->
+    </tbody>
+</table>
 
-<div class="details" id="details" style="display:none;"></div>
+<div class="details" id="details"></div>
 
 <script>
-    if(sessionStorage.getItem("admin") !== "true"){
+// Sécurité : accès admin seulement
+if(sessionStorage.getItem("admin") !== "true"){
     window.location.href="merci.html";
 }
 
-    if(sessionStorage.getItem("admin") !== "true"){
-    window.location.href="admin.html";
-}
+// Récupérer les inscrits
 let data = JSON.parse(localStorage.getItem("eleves")) || [];
-let liste = document.getElementById("liste");
+let tbody = document.querySelector("#tableau tbody");
 let details = document.getElementById("details");
 
+// Fonction pour calculer le total des paiements d'un élève
+function totalPaiements(paiements){
+    let total = 0;
+    for(let mois in paiements){
+        total += Number(paiements[mois] || 0);
+    }
+    return total;
+}
+
+// Remplir le tableau
 data.forEach(eleve=>{
-    let div = document.createElement("div");
-    div.className="card";
-    div.innerHTML = eleve.nom + " " + eleve.prenom;
-    div.onclick = ()=>showDetails(eleve.id);
-    liste.appendChild(div);
+    let tr = document.createElement("tr");
+    tr.innerHTML = `
+        <td>${eleve.nom}</td>
+        <td>${eleve.prenom}</td>
+        <td>${eleve.ecole}</td>
+        <td>${eleve.classe}</td>
+        <td>${totalPaiements(eleve.paiements)}</td>
+    `;
+    tr.onclick = ()=>showDetails(eleve.id);
+    tbody.appendChild(tr);
 });
 
+// Fonction afficher détails
 function showDetails(id){
     let eleve = data.find(e=>e.id===id);
     details.style.display="block";
@@ -98,8 +143,7 @@ function showDetails(id){
     <p>École: ${eleve.ecole}</p>
     <p>Classe: ${eleve.classe}</p>
 
-    <h3>Paiement mensuel</h3>
-
+    <h3>Paiements mensuels</h3>
     <input type="month" id="mois">
     <input type="number" id="montant" placeholder="Montant">
     <button onclick="ajouterPaiement(${eleve.id})">Ajouter / Modifier</button>
@@ -114,11 +158,28 @@ function ajouterPaiement(id){
     let mois = document.getElementById("mois").value;
     let montant = document.getElementById("montant").value;
 
+    if(!mois || !montant) return alert("Veuillez remplir mois et montant");
+
     let eleve = data.find(e=>e.id===id);
-    eleve.paiements[mois]=montant;
+    eleve.paiements[mois] = montant;
 
     localStorage.setItem("eleves", JSON.stringify(data));
     afficherPaiements(eleve);
+
+    // Mettre à jour le tableau total
+    tbody.innerHTML="";
+    data.forEach(e=>{
+        let tr = document.createElement("tr");
+        tr.innerHTML = `
+            <td>${e.nom}</td>
+            <td>${e.prenom}</td>
+            <td>${e.ecole}</td>
+            <td>${e.classe}</td>
+            <td>${totalPaiements(e.paiements)}</td>
+        `;
+        tr.onclick = ()=>showDetails(e.id);
+        tbody.appendChild(tr);
+    });
 }
 
 function afficherPaiements(eleve){
@@ -133,5 +194,3 @@ function afficherPaiements(eleve){
 
 </body>
 </html>
-
-
