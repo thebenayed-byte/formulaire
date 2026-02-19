@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin - Institut Bassora</title>
+
+<style>
+body{
+    background:#0f0f0f;
+    font-family:Segoe UI;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    color:white;
+}
+
+.box{
+    background:#1c1c1c;
+    padding:40px;
+    border-radius:20px;
+    width:350px;
+    text-align:center;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border:none;
+    border-radius:10px;
+    background:#2a2a2a;
+    color:white;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:15px;
+    border:none;
+    border-radius:10px;
+    background:#00bcd4;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>Accès Administrateur</h2>
+<input type="password" id="password" placeholder="Mot de passe">
+<button onclick="login()">Se connecter</button>
+<p id="error" style="color:red;"></p>
+</div>
+
+<script>
+const ADMIN_PASSWORD = "bassora2026"; // ← change ici
+
+function login(){
+    let pass = document.getElementById("password").value;
+
+    if(pass === ADMIN_PASSWORD){
+        sessionStorage.setItem("admin","true");
+        window.location.href="dashboard.html";
+    } else {
+        document.getElementById("error").innerText="Mot de passe incorrect";
+    }
+}
+</script>
+
+</body>
+</html>
