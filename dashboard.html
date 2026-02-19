@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Liste des inscrits</title>
+
+<style>
+body{
+    background:#0f0f0f;
+    font-family:Segoe UI;
+    color:white;
+    padding:20px;
+}
+
+h1{
+    text-align:center;
+}
+
+.list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+}
+
+.card{
+    background:#1c1c1c;
+    padding:15px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+.card:hover{
+    background:#00bcd4;
+}
+
+.details{
+    margin-top:30px;
+    background:#1c1c1c;
+    padding:20px;
+    border-radius:15px;
+}
+
+input{
+    padding:8px;
+    margin:5px 0;
+    border-radius:8px;
+    border:none;
+}
+button{
+    padding:8px 12px;
+    border:none;
+    border-radius:8px;
+    background:#00bcd4;
+    color:white;
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Liste des Inscrits</h1>
+
+<div class="list" id="liste"></div>
+
+<div class="details" id="details" style="display:none;"></div>
+
+<script>
+let data = JSON.parse(localStorage.getItem("eleves")) || [];
+let liste = document.getElementById("liste");
+let details = document.getElementById("details");
+
+data.forEach(eleve=>{
+    let div = document.createElement("div");
+    div.className="card";
+    div.innerHTML = eleve.nom + " " + eleve.prenom;
+    div.onclick = ()=>showDetails(eleve.id);
+    liste.appendChild(div);
+});
+
+function showDetails(id){
+    let eleve = data.find(e=>e.id===id);
+    details.style.display="block";
+
+    details.innerHTML = `
+    <h2>${eleve.nom} ${eleve.prenom}</h2>
+    <p>Email: ${eleve.email}</p>
+    <p>Téléphone: ${eleve.tel}</p>
+    <p>École: ${eleve.ecole}</p>
+    <p>Classe: ${eleve.classe}</p>
+
+    <h3>Paiement mensuel</h3>
+
+    <input type="month" id="mois">
+    <input type="number" id="montant" placeholder="Montant">
+    <button onclick="ajouterPaiement(${eleve.id})">Ajouter / Modifier</button>
+
+    <div id="historique"></div>
+    `;
+
+    afficherPaiements(eleve);
+}
+
+function ajouterPaiement(id){
+    let mois = document.getElementById("mois").value;
+    let montant = document.getElementById("montant").value;
+
+    let eleve = data.find(e=>e.id===id);
+    eleve.paiements[mois]=montant;
+
+    localStorage.setItem("eleves", JSON.stringify(data));
+    afficherPaiements(eleve);
+}
+
+function afficherPaiements(eleve){
+    let historique = document.getElementById("historique");
+    historique.innerHTML="<h4>Historique:</h4>";
+
+    for(let mois in eleve.paiements){
+        historique.innerHTML += `<p>${mois} : ${eleve.paiements[mois]} KMF</p>`;
+    }
+}
+</script>
+
+</body>
+</html>
